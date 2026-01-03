@@ -166,12 +166,10 @@
 
         </plugins>
     </build>
-
     <!-- ===================== -->
     <!-- ===== PROFILES ====== -->
     <!-- ===================== -->
     <profiles>
-
         <!-- PERFIL LOCAL -->
         <profile>
             <id>local</id>
@@ -192,7 +190,6 @@
                 </plugins>
             </build>
         </profile>
-
         <!-- PERFIL CI / JENKINS -->
         <profile>
             <id>ci</id>
@@ -215,7 +212,6 @@
                                 <auth>
                                     <username>${docker.username}</username>
                                     <password>${docker.password}</password>
-
                                 </auth>
                             </to>
                         </configuration>
@@ -223,7 +219,5 @@
                 </plugins>
             </build>
         </profile>
-
     </profiles>
-
 </project>
