@@ -1,0 +1,45 @@
+
+///CONFIGSERVER///
+Crear imagen
+docker build --build-arg JAR_FILE=target/*.jar -t configserver_image:0.0.1-SNAPSHOT .
+
+Ejecutar contenedor a partir de la imagen
+docker run -d -e REPOSITORY_PATH=/repo -v "/d/Proyectos/SpringBoot/paymentchainparent/config-server-repo:/repo" -p 8888:8888 --name configserver_container configserver_image:0.0.1-SNAPSHOT
+///EUREKA///
+Crear imagen
+docker build --build-arg JAR_FILE=target/*.jar -t eurekaserver_image:0.0.1-SNAPSHOT .
+
+Ejecutar contenedor a partir de la imagen
+docker run -d -p 8761:8761 --name eurekaserver_container eurekaserver_image:0.0.1-SNAPSHOT
+///ADMIN///
+Crear imagen
+docker build --build-arg JAR_FILE=target/*.jar -t admin_image:0.0.1-SNAPSHOT .
+
+Ejecutar contenedor a partir de la imagen
+docker run -d -p 8062:8062 --name admin_container admin_image:0.0.1-SNAPSHOT
+///CUSTOMER///
+Crear imagen
+docker build --build-arg JAR_FILE=target/*.jar -t customer_image:0.0.1-SNAPSHOT .
+
+Ejecutar contenedor a partir de la imagen
+docker run -d -e EUREKA_SERVER="http://registry-discovery:8761/eureka/" -p 8080:8080 --name customer_container customer_image:0.0.1-SNAPSHOT
+
+/////INVOICE////
+Crear imagen
+docker build --build-arg JAR_FILE=target/*.jar -t invoice_image:0.0.1-SNAPSHOT .
+
+Ejecutar contenedor a partir de la imagen
+docker run -d -p 8084:8084 --name invoice_container invoice_image:0.0.1-SNAPSHOT
+
+/////Product////
+Crear imagen
+docker build --build-arg JAR_FILE=target/*.jar -t product_image:0.0.1-SNAPSHOT .
+
+Ejecutar contenedor a partir de la imagen
+docker run -d -p 8081:8081 --name product_container product_image:0.0.1-SNAPSHOT
+/////transaction////
+Crear imagen
+docker build --build-arg JAR_FILE=target/*.jar -t transaction_image:0.0.1-SNAPSHOT .
+
+Ejecutar contenedor a partir de la imagen
+docker run -d -p 8082:8082 --name transaction_container transaction_image:0.0.1-SNAPSHOT

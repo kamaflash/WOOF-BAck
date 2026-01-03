@@ -1,0 +1,200 @@
+## YAML Template.
+---
+services:
+  registry-discovery:
+    container_name: id-eureka
+    image: eurekaservice_image:0.0.1-SNAPSHOT
+    ports:
+      - 8761:8761
+    environment:
+      - JAVA_OPTS=
+         -Xms256M 
+         -Xmx256M
+
+  configserver:
+    container_name: bd-configserver
+    image: configserver_image:0.0.1-SNAPSHOT
+    environment:
+      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
+      - REPOSITORY_PATH=/repo
+      - JAVA_OPTS=
+         -Xms256M 
+         -Xmx256M
+
+    volumes:
+      - /d/Proyectos/Pets/JavaBack/config-server-repo:/repo
+    depends_on:
+      - registry-discovery
+    ports:
+      - 8888:8888
+
+  admin_image:
+    container_name: bd-admin_image
+    image: admin_image:0.0.1-SNAPSHOT
+    environment:
+      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
+      - JAVA_OPTS=
+         -Xms256M 
+         -Xmx256M
+
+    depends_on:
+      - registry-discovery
+    ports:
+      - 8062:8062
+
+  userservice_image:
+      container_name: bd-user_service
+      image: userservice_image:0.0.1-SNAPSHOT
+      environment:
+        - EUREKA_SERVER=http://registry-discovery:8761/eureka/
+        - JAVA_OPTS=
+           -Xms256M 
+           -Xmx256M
+
+      depends_on:
+        - registry-discovery
+        - postgres_db
+
+  petservice_image:
+    container_name: bd-pet_service
+    image: petservice_image:0.0.1-SNAPSHOT
+    environment:
+      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
+      - JAVA_OPTS=
+        -Xms256M
+        -Xmx256M
+
+    depends_on:
+      - registry-discovery
+
+  request_image:
+    container_name: bd-request_service
+    image: request_image:0.0.1-SNAPSHOT
+    environment:
+      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
+      - JAVA_OPTS=
+        -Xms256M
+        -Xmx256M
+
+    depends_on:
+      - registry-discovery
+
+  matchservice_image:
+    container_name: bd-match_service
+    image: matchservice_image:0.0.1-SNAPSHOT
+    environment:
+      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
+      - JAVA_OPTS=
+        -Xms256M
+        -Xmx256M
+
+    depends_on:
+      - registry-discovery
+
+  notificationservice_image:
+    container_name: bd-notification_service
+    image: notificationservice_image:0.0.1-SNAPSHOT
+    environment:
+      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
+      - JAVA_OPTS=
+        -Xms256M
+        -Xmx256M
+
+    depends_on:
+      - registry-discovery
+
+
+  frontend:
+    container_name: angular_front
+    build:
+      context: ../Front/buddy-adopt
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"   # Nginx sirve SPA
+    restart: always
+    depends_on:
+      - apigateway_image
+
+
+  apigateway_image:
+      container_name: id_apigateway_image
+      image: apigateway_image:0.0.1-SNAPSHOT
+      environment:
+        - EUREKA_SERVER=http://registry-discovery:8761/eureka/
+        - JAVA_OPTS=
+             -Xms256M 
+             -Xmx256M
+
+      depends_on:
+        - registry-discovery
+      ports:
+        - 8080:8080
+
+  keycloackadapter_image:
+    container_name: id-keycloackadapter_image
+    image: keycloackadapter_image:0.0.1-SNAPSHOT
+    environment:
+      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
+      - KEYCLOACK_SERVER=http://keycloak_server:8080/realms/
+      - KEYCLOACK_REAL_ID=iahJ4wDs1rfRb6GK0up9n8nTJznWYECvvbqpgubBLes
+      - JAVA_OPTS=
+         -Xms256M 
+         -Xmx256Ms
+
+    depends_on:
+      - registry-discovery
+    ports:
+      - 8088:8088
+
+  postgres_db:
+    container_name: postgres_db
+    image: postgres:17
+    ports:
+      - 5432:5432
+    volumes:
+      - ./dbfiles:/docker-entrypoint-initdb.d
+      - ./postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: pintter
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+      PGADMIN_DEFAULT_PASSWORD: "qwerty"
+    ports:
+      - 80:80
+    depends_on:
+      - postgres_db
+
+      #BD para H2
+  keycloak_server:
+    container_name: id_keycloakserver
+    image: quay.io/keycloak/keycloak:24.0.1
+    command: start-dev
+    environment:
+        KEYCLOAK_ADMIN: admin
+        KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+        - 8091:8080
+      #BD para postgres
+  #keycloak:
+  #  container_name: keycloak
+   # image: quay.io/keycloak/keycloak:24.0.3
+   # command: start-dev
+   # ports:
+   #   - 8080:8080
+   # environment:
+   #   KC_DB: postgres
+   #   KC_DB_URL: jdbc:postgresql://postgres_db:5432/postgres
+   #   KC_DB_USERNAME: postgres
+   #   KC_DB_PASSWORD: qwerty
+   #   KEYCLOAK_ADMIN: admin
+   #   KEYCLOAK_ADMIN_PASSWORD: admin
+   # depends_on:
+   #   - postgres_db
+
+

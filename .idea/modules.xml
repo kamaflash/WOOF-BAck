@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/infrastructuredomain/admin/admin.iml" filepath="$PROJECT_DIR$/infrastructuredomain/admin/admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/infrastructuredomain/apigateway/apigateway.iml" filepath="$PROJECT_DIR$/infrastructuredomain/apigateway/apigateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/infrastructuredomain/configserver/configserver.iml" filepath="$PROJECT_DIR$/infrastructuredomain/configserver/configserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/businessdomain/matchservice/matchservice.iml" filepath="$PROJECT_DIR$/businessdomain/matchservice/matchservice.iml" />
+    </modules>
+  </component>
+</project>
