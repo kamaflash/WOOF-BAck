@@ -166,12 +166,10 @@
 
         </plugins>
     </build>
-
     <!-- ===================== -->
     <!-- ===== PROFILES ====== -->
     <!-- ===================== -->
     <profiles>
-
         <!-- PERFIL LOCAL -->
         <profile>
             <id>local</id>
