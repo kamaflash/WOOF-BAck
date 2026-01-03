@@ -192,7 +192,6 @@
                 </plugins>
             </build>
         </profile>
-
         <!-- PERFIL CI / JENKINS -->
         <profile>
             <id>ci</id>
@@ -215,7 +214,6 @@
                                 <auth>
                                     <username>${docker.username}</username>
                                     <password>${docker.password}</password>
-
                                 </auth>
                             </to>
                         </configuration>
@@ -223,7 +221,5 @@
                 </plugins>
             </build>
         </profile>
-
     </profiles>
-
 </project>
