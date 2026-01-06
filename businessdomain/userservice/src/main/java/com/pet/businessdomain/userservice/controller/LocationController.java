@@ -36,22 +36,15 @@ public class LocationController {
                 "&components=country:ES" +
                 "&key=" + googleApiKey;
 
-        System.out.println("ADDRESS ENVIADA → " + cleanAddress);
-        System.out.println("URL FINAL → " + url);
-
         Map body = restTemplate.getForObject(url, Map.class);
-
         if (!"OK".equals(body.get("status"))) {
             throw new Exception("Error Google Geocode API: " + body.get("status"));
         }
-
         List results = (List) body.get("results");
-
         if (results == null || results.isEmpty()) {
             throw new Exception("Google Geocode: ZERO_RESULTS para " + cleanAddress);
         }
-
-        Map geometry = (Map)((Map)((List)body.get("results")).get(0)).get("geometry");
+        Map<String, Object> geometry = (Map)((Map)((List)body.get("results")).get(0)).get("geometry");
         return (Map<String, Double>) geometry.get("location");
     }
     private String normalizeSpanishAddress(String address) {
