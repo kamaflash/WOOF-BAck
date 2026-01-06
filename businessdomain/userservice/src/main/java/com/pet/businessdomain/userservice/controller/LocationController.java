@@ -66,9 +66,9 @@ public class LocationController {
                 // RAMBLA
                 .replaceAll("(?i)(^|\\s)(Rbla\\.|Rambla)(?=\\s)", " Rambla ")
                 // URBANIZACIÓN
-                .replaceAll("(?i)(^|\\s)(Urb\\.|Urbanizacion|Urbanización|Urb)(?=\\s)", " Urbanización ")
+                .replaceAll("(?iu)(^|\\s)(Urb\\.|Urbanizacion|Urbanización|Urb)(?=\\s)", " Urbanización ")
                 // TRAVESÍA
-                .replaceAll("(?i)(^|\\s)(Trv\\.|Travesia|Travesía)(?=\\s)", " Travesía ")
+                .replaceAll("(?iu)(^|\\s)(Trv\\.|Travesia|Travesía)(?=\\s)", " Travesía ")
                 // NÚMEROS Y EXTRA
                 .replace(",", " ")
                 .replace("º", "")
