@@ -1,6 +1,5 @@
 package com.pet.businessdomain.userservice;
 
-import com.pet.businessdomain.userservice.controller.UserController;
 import com.pet.businessdomain.userservice.dto.UserDto;
 import com.pet.businessdomain.userservice.entities.User;
 import com.pet.businessdomain.userservice.mapper.UserMapper;
@@ -12,7 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +28,13 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(UserController.class)
+@SpringBootTest(properties = {
+        "spring.jpa.hibernate.ddl-auto=none",
+        "spring.datasource.url=jdbc:h2:mem:testdb",
+        "spring.datasource.driverClassName=org.h2.Driver",
+        "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"
+})
+@AutoConfigureMockMvc
 class UserControllerFullTest {
 
     @Autowired
