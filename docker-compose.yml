@@ -125,7 +125,7 @@ services:
     environment:
       - EUREKA_SERVER=http://registry-discovery:8761/eureka/
       - KEYCLOACK_SERVER=http://keycloak_server:8080/realms/
-      - KEYCLOACK_REAL_ID=doSxJsopmJY7c3X-Al7k82RJoBcWtWDVnZKNInS1e-8
+      - KEYCLOACK_REAL_ID=q2uNmWZGt_MBVNoms6K4C2_FCAdG-E4wyndEnZwjh58
       - JAVA_OPTS=
          -Xms256M 
          -Xmx256Ms
@@ -165,10 +165,24 @@ services:
     image: quay.io/keycloak/keycloak:24.0.1
     command: start-dev
     environment:
-        KEYCLOAK_ADMIN: admin
-        KEYCLOAK_ADMIN_PASSWORD: admin
+      # Admin por defecto
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
+      # Configuración de la DB Postgres
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres_db:5432/pintter
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: qwerty
+
     ports:
-        - 8091:8080
+      - 8091:8080
+    depends_on:
+      - postgres_db
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+
+
       #BD para postgres
   #keycloak:
   #  container_name: keycloak
@@ -189,3 +203,6 @@ services:
 networks:
   buddy-net:
     external: true
+  # Volumen para persistir datos de Keycloak
+volumes:
+  keycloak_data:
