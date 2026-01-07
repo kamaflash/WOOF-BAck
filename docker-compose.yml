@@ -116,6 +116,8 @@ services:
         - registry-discovery
       ports:
         - 8080:8080
+      networks:
+        - buddy-net
 
   keycloackadapter_image:
     container_name: id-keycloackadapter_image
@@ -184,4 +186,6 @@ services:
    # depends_on:
    #   - postgres_db
 
-
+networks:
+  buddy-net:
+    external: true
