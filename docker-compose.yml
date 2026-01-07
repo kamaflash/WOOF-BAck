@@ -103,19 +103,6 @@ services:
     depends_on:
       - registry-discovery
 
-
-  frontend:
-    container_name: angular_front
-    build:
-      context: ../Front/buddy-adopt
-      dockerfile: Dockerfile
-    ports:
-      - "4200:80"   # Nginx sirve SPA
-    restart: always
-    depends_on:
-      - apigateway_image
-
-
   apigateway_image:
       container_name: id_apigateway_image
       image: apigateway_image:0.0.1-SNAPSHOT
