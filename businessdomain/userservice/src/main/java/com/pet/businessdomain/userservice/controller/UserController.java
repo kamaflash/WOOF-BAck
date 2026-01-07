@@ -4,8 +4,6 @@
  */
 package com.pet.businessdomain.userservice.controller;
 
-import com.pet.businessdomain.userservice.dto.EmailRequestDto;
-import com.pet.businessdomain.userservice.dto.FollowerDto;
 import com.pet.businessdomain.userservice.dto.LoginDto;
 import com.pet.businessdomain.userservice.dto.UserDto;
 import com.pet.businessdomain.userservice.entities.User;
@@ -20,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +39,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
     private static final int SIZE = 5;
+    private static final String SHELTTER = "shelter";
+    private static final String MESSAGE = "message";
+    private static final String RESULT = "result";
+    private static final String NOTEXIT = "No existe el usuario";
 
     @Autowired
     private UserService userService;
@@ -70,9 +71,9 @@ public class UserController {
                                                 @RequestParam(name = "page",defaultValue = "0") int page) throws BusinessRuleException {
 
         Pageable pageable = PageRequest.of(page, SIZE);
-        Page<User> usersPage = userRepository.findByAccountType("shelter", pageable);;
+        Page<User> usersPage = userRepository.findByAccountType(SHELTTER, pageable);
         if(uid != 0) {
-            usersPage = userRepository.findByIdNotAndAccountType(uid, "shelter", pageable);
+            usersPage = userRepository.findByIdNotAndAccountType(uid, SHELTTER, pageable);
         }
         Page<UserDto> usersDtoPage = usersPage.map(userMapper::toDto);
         if (usersDtoPage.isEmpty()) {
@@ -114,10 +115,10 @@ public class UserController {
         boolean exists = userService.existsByUsername(username);
 
         if (exists) {
-            return ResponseEntity.ok(Map.of("message", "El nombre de usuario ya existe.","result", true));
+            return ResponseEntity.ok(Map.of(MESSAGE, "El nombre de usuario ya existe.",RESULT, true));
 
         } else {
-            return ResponseEntity.ok(Map.of("message", "Bien","result", false));
+            return ResponseEntity.ok(Map.of(MESSAGE, "Bien",RESULT, false));
         }
     }
     @GetMapping("exist/email/{email}")
@@ -125,10 +126,10 @@ public class UserController {
         boolean exists = userService.existsByEmail(email);
 
         if (exists) {
-            return ResponseEntity.ok(Map.of("message", "El email ya existe.","result", true));
+            return ResponseEntity.ok(Map.of(MESSAGE, "El email ya existe.",RESULT, true));
 
         } else {
-            return ResponseEntity.ok(Map.of("message", "Bien","result", false));
+            return ResponseEntity.ok(Map.of(MESSAGE, "Bien",RESULT, false));
         }
     }
 
@@ -140,7 +141,7 @@ public class UserController {
         if (save != null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(save);
         } else {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No existe el usuario");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(NOTEXIT);
         }
     }
     @GetMapping("/{id}")
@@ -153,7 +154,7 @@ public class UserController {
         if (userDto != null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(userDto);
         } else {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No existe el usuario");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(NOTEXIT);
         }
     }
     @GetMapping("/seltter/{id}")
@@ -164,7 +165,7 @@ public class UserController {
         if (save != null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(save);
         } else {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No existe el usuario");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(NOTEXIT);
         }
     }
     @GetMapping("/pet/{id}")
@@ -175,7 +176,7 @@ public class UserController {
         if (save != null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(save);
         } else {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No existe el usuario");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(NOTEXIT);
         }
     }
 
@@ -210,7 +211,7 @@ public class UserController {
     public ResponseEntity<?>  geRegister(@RequestBody UserDto userDto) throws BusinessRuleException, MessagingException {
 
         emailService.sendConfirmationEmail(userDto);
-        return ResponseEntity.ok(Map.of("message", "Se te ha enviado un mail a la dirección facilitada. Revise para confirmar registro."));
+        return ResponseEntity.ok(Map.of(MESSAGE, "Se te ha enviado un mail a la dirección facilitada. Revise para confirmar registro."));
     }
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) throws BusinessRuleException, UnknownHostException {
