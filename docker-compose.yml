@@ -125,7 +125,7 @@ services:
     environment:
       - EUREKA_SERVER=http://registry-discovery:8761/eureka/
       - KEYCLOACK_SERVER=http://keycloak_server:8080/realms/
-      - KEYCLOACK_REAL_ID=q2uNmWZGt_MBVNoms6K4C2_FCAdG-E4wyndEnZwjh58
+      - KEYCLOACK_REAL_ID=eG8t6pcTit7ClrWO63HkXrxyMmsYkf0By2LouKsWDMY
       - JAVA_OPTS=
          -Xms256M 
          -Xmx256Ms
