@@ -1,187 +1,213 @@
 ## YAML Template.
 ---
 services:
+
+  # =========================
+  # EUREKA
+  # =========================
   registry-discovery:
     container_name: id-eureka
     image: eurekaservice_image:0.0.1-SNAPSHOT
     ports:
-      - 8761:8761
+      - "8761:8761"
     environment:
-      - JAVA_OPTS=
-         -Xms256M 
-         -Xmx256M
+      JAVA_OPTS: "-Xms256M -Xmx256M"
+    networks:
+      - buddy-net
 
+
+  # =========================
+  # CONFIG SERVER
+  # =========================
   configserver:
     container_name: bd-configserver
     image: configserver_image:0.0.1-SNAPSHOT
+    ports:
+      - "8888:8888"
     environment:
-      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
-      - REPOSITORY_PATH=/repo
-      - JAVA_OPTS=
-         -Xms256M 
-         -Xmx256M
-
+      JAVA_OPTS: "-Xms256M -Xmx256M"
+      EUREKA_SERVER: http://registry-discovery:8761/eureka/
+      REPOSITORY_PATH: /repo
     volumes:
-      - /d/Proyectos/Pets/JavaBack/config-server-repo:/repo
+      - /d/Proyectos/NewPets/JavaBack/config-server-repo:/repo
     depends_on:
       - registry-discovery
-    ports:
-      - 8888:8888
+    networks:
+      - buddy-net
 
-  admin_image:
-    container_name: bd-admin_image
+
+  # =========================
+  # ADMIN SERVICE
+  # =========================
+  admin_service:
+    container_name: bd-admin_service
     image: admin_image:0.0.1-SNAPSHOT
     environment:
-      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
-      - JAVA_OPTS=
-         -Xms256M 
-         -Xmx256M
-
+      JAVA_OPTS: "-Xms256M -Xmx256M"
+      EUREKA_SERVER: http://registry-discovery:8761/eureka/
     depends_on:
       - registry-discovery
-    ports:
-      - 8062:8062
+      - configserver
+    networks:
+      - buddy-net
 
-  userservice_image:
-      container_name: bd-user_service
-      image: userservice_image:0.0.1-SNAPSHOT
-      environment:
-        - EUREKA_SERVER=http://registry-discovery:8761/eureka/
-        - JAVA_OPTS=
-           -Xms256M 
-           -Xmx256M
 
-      depends_on:
-        - registry-discovery
-        - postgres_db
+  # =========================
+  # USER SERVICE
+  # =========================
+  userservice:
+    container_name: bd-user_service
+    image: userservice_image:0.0.1-SNAPSHOT
+    environment:
+      JAVA_OPTS: "-Xms256M -Xmx256M"
+      EUREKA_SERVER: http://registry-discovery:8761/eureka/
+    depends_on:
+      - registry-discovery
+      - configserver
+      - postgres_db
+    networks:
+      - buddy-net
 
-  petservice_image:
+
+  # =========================
+  # PET SERVICE
+  # =========================
+  petservice:
     container_name: bd-pet_service
     image: petservice_image:0.0.1-SNAPSHOT
     environment:
-      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
-      - JAVA_OPTS=
-        -Xms256M
-        -Xmx256M
-
+      JAVA_OPTS: "-Xms256M -Xmx256M"
+      EUREKA_SERVER: http://registry-discovery:8761/eureka/
     depends_on:
       - registry-discovery
+      - configserver
+    networks:
+      - buddy-net
 
-  request_image:
+
+  # =========================
+  # REQUEST SERVICE
+  # =========================
+  requestservice:
     container_name: bd-request_service
     image: request_image:0.0.1-SNAPSHOT
     environment:
-      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
-      - JAVA_OPTS=
-        -Xms256M
-        -Xmx256M
-
+      JAVA_OPTS: "-Xms256M -Xmx256M"
+      EUREKA_SERVER: http://registry-discovery:8761/eureka/
     depends_on:
       - registry-discovery
+      - configserver
+    networks:
+      - buddy-net
 
-  matchservice_image:
+
+  # =========================
+  # MATCH SERVICE
+  # =========================
+  matchservice:
     container_name: bd-match_service
     image: matchservice_image:0.0.1-SNAPSHOT
     environment:
-      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
-      - JAVA_OPTS=
-        -Xms256M
-        -Xmx256M
-
+      JAVA_OPTS: "-Xms256M -Xmx256M"
+      EUREKA_SERVER: http://registry-discovery:8761/eureka/
     depends_on:
       - registry-discovery
+      - configserver
+    networks:
+      - buddy-net
 
-  notificationservice_image:
+
+  # =========================
+  # NOTIFICATION SERVICE
+  # =========================
+  notificationservice:
     container_name: bd-notification_service
     image: notificationservice_image:0.0.1-SNAPSHOT
     environment:
-      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
-      - JAVA_OPTS=
-        -Xms256M
-        -Xmx256M
-
+      JAVA_OPTS: "-Xms256M -Xmx256M"
+      EUREKA_SERVER: http://registry-discovery:8761/eureka/
     depends_on:
       - registry-discovery
+      - configserver
+    networks:
+      - buddy-net
 
-  apigateway_image:
-      container_name: id_apigateway_image
-      image: apigateway_image:0.0.1-SNAPSHOT
-      environment:
-        - EUREKA_SERVER=http://registry-discovery:8761/eureka/
-        - JAVA_OPTS=
-             -Xms256M 
-             -Xmx256M
 
-      depends_on:
-        - registry-discovery
-      ports:
-        - 8080:8080
-      networks:
-        - buddy-net
-
-  keycloackadapter_image:
-    container_name: id-keycloackadapter_image
-    image: keycloackadapter_image:0.0.1-SNAPSHOT
-    environment:
-      - EUREKA_SERVER=http://registry-discovery:8761/eureka/
-      - KEYCLOACK_SERVER=http://keycloak_server:8080/realms/
-      - KEYCLOACK_REAL_ID=eG8t6pcTit7ClrWO63HkXrxyMmsYkf0By2LouKsWDMY
-      - JAVA_OPTS=
-         -Xms256M 
-         -Xmx256Ms
-
-    depends_on:
-      - registry-discovery
+  # =========================
+  # API GATEWAY
+  # =========================
+  apigateway:
+    container_name: id-apigateway
+    image: apigateway_image:0.0.1-SNAPSHOT
     ports:
-      - 8088:8088
+      - "8080:8080"
+    environment:
+      JAVA_OPTS: "-Xms256M -Xmx256M"
+      EUREKA_SERVER: http://registry-discovery:8761/eureka/
+    depends_on:
+      - registry-discovery
+      - configserver
+    networks:
+      - buddy-net
 
+
+  # =========================
+  # POSTGRES
+  # =========================
   postgres_db:
     container_name: postgres_db
     image: postgres:17
     ports:
-      - 5432:5432
-    volumes:
-      - ./dbfiles:/docker-entrypoint-initdb.d
-      - ./postgres_data:/var/lib/postgresql/data
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: qwerty
       POSTGRES_DB: pintter
+    volumes:
+      - ./dbfiles:/docker-entrypoint-initdb.d
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - buddy-net
 
+
+  # =========================
+  # PGADMIN
+  # =========================
   pgadmin4:
     image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
-      PGADMIN_DEFAULT_PASSWORD: "qwerty"
     ports:
-      - 80:80
+      - "80:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: qwerty
     depends_on:
       - postgres_db
+    networks:
+      - buddy-net
 
-      #BD para H2
+
+  # =========================
+  # KEYCLOAK
+  # =========================
   keycloak_server:
-    container_name: id_keycloakserver
+    container_name: id-keycloak
     image: quay.io/keycloak/keycloak:24.0.1
     command: start-dev
+    ports:
+      - "8091:8080"
     environment:
-      # Admin por defecto
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-
-      # Configuración de la DB Postgres
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres_db:5432/pintter
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: qwerty
-
-    ports:
-      - 8091:8080
     depends_on:
       - postgres_db
     volumes:
       - keycloak_data:/opt/keycloak/data
-
+    networks:
+      - buddy-net
 
       #BD para postgres
   #keycloak:
@@ -199,10 +225,12 @@ services:
    #   KEYCLOAK_ADMIN_PASSWORD: admin
    # depends_on:
    #   - postgres_db
-
+# =========================
+# NETWORKS & VOLUMES
+# =========================
 networks:
   buddy-net:
     external: true
-  # Volumen para persistir datos de Keycloak
+
 volumes:
   keycloak_data:
